@@ -19,22 +19,25 @@ public class ModelTests {
 
     public class TestModel extends DraughtsModel {
 
-      public TestModel(String gameName, Player player, Colour currentPlayer, Set<Piece> pieces) {
-          super(gameName, player, currentPlayer, pieces);
-      }
+        public TestModel(String gameName, Player player, Colour currentPlayer, Set<Piece> pieces) {
+            super(gameName, player, currentPlayer, pieces);
+        }
 
-      public TestModel(String gameName, Player player) {
-          super(gameName, player);
-      }
+        public TestModel(String gameName, Player player) {
+            super(gameName, player);
+        }
 
-      public boolean removePieceInModel(Point position, Point destination) {
-          return removePiece(position, destination);
-      }
+        public boolean removePieceInModel(Point position, Point destination) {
+            return removePiece(position, destination);
+        }
 
-      public void turnInModel() {
-          turn();
-      }
-
+        public void turnInModel() {
+            turn();
+        }
+        
+        public void playInModel(Move move) {
+            play(move);
+        }
     }
 
     @Test
@@ -87,7 +90,6 @@ public class ModelTests {
         Point p3 = new Point(5,7);
 
         TestModel model = new TestModel("Test", new TestPlayer(), Colour.Red, pieces);
-        model.removePieceInModel()
 
         assertEquals("A piece has not been jumped", false, model.removePieceInModel(p1, p2));
         assertEquals("A piece has been jumped", true, model.removePieceInModel(p1, p3));
@@ -103,16 +105,21 @@ public class ModelTests {
 
         Move move1 = new Move(p1, 4, 6);
         
-        model.play(move1);
-        Piece noraml_move_p1 = model.getPiece(4, 6);
+        //model.play(move1);
+        model.playInModel(move1);
+
+        Piece normal_move_p1 = model.getPiece(4, 6);
         Piece non_move_p1 = model.getPiece(3, 5);
+        
         assertEquals("Piece has been moved from original position correctly", non_move_p1, null);
         assertEquals("Piece moved single cell correctly", normal_move_p1, p1);
 
         Move move2 = new Move(p1, 5, 7);
 
-        model.play(move2);
-        Piece jump_move_p1 = model.getPiece();
+        //model.play(move2);
+        model.playInModel(move2);
+
+        Piece jump_move_p1 = model.getPiece(5, 7); //i think
         assertEquals("Piece jump moved correctly", jump_move_p1, p1);
     }
 
@@ -128,9 +135,10 @@ public class ModelTests {
 
         Move move = new Move(p1, 5, 7);
 
-        model.play(move);
+        model.playInModel(move);
+
         Piece removed_peice = model.getPiece(4, 6);
-        asserEquals("Piece removed after jump", removed_peice, null);
+        assertEquals("Piece removed after jump", removed_peice, null);
     }
 
     @Test
@@ -152,10 +160,10 @@ public class ModelTests {
             new Point(7, 2)
         };
 
-        for (Point point : white_points) {}
-            Piece piece = model.getPiece(point.getX(), point.getY);
+        for (Point point: white_points) {
+            Piece piece = model.getPiece((int) point.getX(),(int) point.getY());
             assertNotNull(piece);
-            assertEqual("Piece is correct colour", piece.getColour(), Colour.White);
+            assertEquals("Piece is correct colour", piece.getColour(), Colour.White);
         }
 
         Point[] red_points = {
@@ -173,11 +181,10 @@ public class ModelTests {
             new Point(6, 7)
         };
 
-        for (Point point : red_points) {}
-            Piece piece = model.getPiece(point.getX(), point.getY);
+        for (Point point: red_points) {
+            Piece piece = model.getPiece((int) point.getX(), (int) point.getY());
             assertNotNull(piece);
-            assertEqual("Piece is correct colour", piece.getColour(), Colour.Red);
+            assertEquals("Piece is correct colour", piece.getColour(), Colour.Red);
         }
     }
-
 }
